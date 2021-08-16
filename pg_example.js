@@ -1,17 +1,29 @@
 const dotenv = require("dotenv");
 const { Pool } = require("pg");
+const fs = require("fs");
 
 dotenv.config();
 
-const postgresURL = `postgres://${process.env.PG_USER}:${process.env.PG_PASSWORD}
-@${process.env.PG_HOST}:${process.env.PG_PORT}/${process.env.PG_DB}`;
+const postgresURL = `postgres://${process.env.POSTGRES_USER}:${process.env.POSTGRES_PASSWORD}
+@${process.env.POSTGRES_HOST}:${process.env.POSTGRES_PORT}/${process.env.POSTGRES_DB}`;
+
+const sql = fs.readFileSync("./user.sql").toString();
 
 const pool = new Pool({
   connectionString: postgresURL,
 });
 
+pool.query(sql, (err, result) => {
+  if (err) {
+    console.log("Error: ", err);
+    process.exit(1);
+  }
+  console.log(result);
+  process.exit(0);
+});
+
 pool.query(
-  `SELECT userid, name FROM payroll
+  `SELECT * FROM AppUser
     LIMIT 5;`,
   [],
   function (err, result) {
