@@ -34,10 +34,27 @@ function checkCredentials(username, password) {
           console.log(err);
           rej({ success: false, user: undefined });
         }
-        res({ success: true, details: result.rows[0] });
+        res({ success: true, user: result.rows[0] });
       }
     );
   });
 }
 
-module.exports = { seedDB, checkCredentials };
+function getUsers() {
+  return new Promise((res, rej) => {
+    pool.query(
+      `SELECT login, password FROM AppUser`,
+      [],
+      function (err, result) {
+        if (err) {
+          console.log(err);
+          rej({ success: false, users: undefined });
+        } else {
+          res({ success: true, users: result.rows });
+        }
+      }
+    );
+  });
+}
+
+module.exports = { seedDB, checkCredentials, getUsers };

@@ -4,9 +4,12 @@ body {
   color: slategray;
 }
 
-form {
+/* LOGIN FORM */
+
+form,
+#users-list {
   width: 50%;
-  margin: 0 auto;
+  margin: 2rem auto;
   background: white;
   border-radius: 5px;
   box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1),
@@ -57,4 +60,11 @@ button:hover {
   background: slateblue;
   box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1),
     0 2px 4px -1px rgba(0, 0, 0, 0.06);
+}
+
+/* USER LIST */
+
+.user-credential {
+  margin-bottom: 1rem;
+  list-style-type: none;
 }

@@ -1,7 +1,8 @@
+const { readFileSync } = require("fs");
 const express = require("express");
 const app = express();
 const path = require("path");
-const { seedDB, checkCredentials } = require("./database");
+const { seedDB, checkCredentials, getUsers } = require("./database");
 
 seedDB();
 
@@ -9,7 +10,22 @@ app.use(express.urlencoded({ extended: false }));
 app.use(express.static(path.resolve(__dirname, "./public")));
 
 app.get("/", (req, res) => {
-  res.status(200).sendFile(path.resolve(__dirname, "./index.html"));
+  const html = readFileSync(path.resolve(__dirname, "./index.html"));
+  let userCredentials = "<div id='users-list'><ol>";
+  getUsers()
+    .then((data) => {
+      data.users.forEach((user) => {
+        userCredential = `<li>
+          <ul class='user-credential'>
+            ${createListItems(user)}
+          </ul>
+        </li>`;
+        userCredentials += userCredential;
+      });
+      userCredentials += "</ol></div>";
+    })
+    .then(() => res.status(200).write(html))
+    .then(() => res.end(userCredentials));
 });
 
 app.post("/", (req, res) => {
@@ -23,10 +39,10 @@ app.post("/", (req, res) => {
         .setHeader("Content-Type", "text/html")
         .send(
           `<h1>
-          ${result.details.name}'s Details
+          ${result.user.name}'s Details
           </h1>
           <ul>
-            ${createDetails(result.details)}
+            ${createListItems(result.user)}
           </ul>`
         );
     } else {
@@ -45,7 +61,7 @@ app.all("*", (req, res) => {
 
 const port = app.listen(5000, () => console.log("App is listening..."));
 
-function createDetails(data) {
+function createListItems(data) {
   let details = "";
   for (const detail in data) {
     details += "<li><strong>" + detail + "</strong>: " + data[detail] + "</li>";
